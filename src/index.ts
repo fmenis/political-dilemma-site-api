@@ -1,8 +1,9 @@
-import Fastify, { FastifyRequest, FastifyReply } from "fastify";
+import Fastify from "fastify";
 import env from "@fastify/env";
 
 import { ConfigSchemaType, configSchema } from "./utils/env.schema";
 import { buildServerOptions } from "./utils/serverOpts";
+import app from "./app";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -18,9 +19,7 @@ async function run() {
     schema: configSchema,
   });
 
-  fastify.get("/", (req: FastifyRequest, reply: FastifyReply) => {
-    return "Hello World!";
-  });
+  await fastify.register(app);
 
   await fastify.listen({
     port: fastify.config.SERVER_PORT,
@@ -40,4 +39,5 @@ run().catch((err) => {
 /**
  * ##TODO
  * - linter and formatter
+ * - nodemon config file
  */
