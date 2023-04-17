@@ -10,6 +10,6 @@ export default async function index(fastify: FastifyInstance) {
     };
   });
 
-  const prefix = "/articles";
+  const prefix = "/v1/articles";
   fastify.register(listArticles, { prefix });
 }

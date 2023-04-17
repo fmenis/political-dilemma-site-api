@@ -21,6 +21,8 @@ async function run() {
 
   await fastify.register(app);
 
+  await fastify.ready();
+
   await fastify.listen({
     port: fastify.config.SERVER_PORT,
     host: fastify.config.SERVER_ADDRESS,
