@@ -1,0 +1,27 @@
+{
+  "name": "political-dilemma-site-api",
+  "version": "0.0.1",
+  "description": "Api service for politicalDilemma website",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "test",
+    "build": "tsc -p tsconfig.json",
+    "start": "node -r dotenv/config dist/index.js",
+    "dev": "nodemon -r dotenv/config src/index.ts "
+  },
+  "author": "filippomeniswork@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/env": "^4.2.0",
+    "@sinclair/typebox": "^0.27.8",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "fastify-tsconfig": "^1.0.1",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
