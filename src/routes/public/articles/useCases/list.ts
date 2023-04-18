@@ -5,7 +5,7 @@ import {
   RegisterOptions,
 } from "fastify";
 import {
-  ListArticlesType,
+  ListArticlesQuerystringType,
   listArticlesQuerystring,
 } from "../lib/article.schema";
 
@@ -13,8 +13,7 @@ export default async function listArticles(
   fastify: FastifyInstance,
   opts: RegisterOptions
 ) {
-  //   const { productService } = fastify;
-  const { prisma } = fastify;
+  const { articleService } = fastify;
 
   fastify.route({
     url: "/",
@@ -30,10 +29,16 @@ export default async function listArticles(
   });
 
   async function onListArticles(
-    req: FastifyRequest<{ Querystring: ListArticlesType }>,
+    req: FastifyRequest<{ Querystring: ListArticlesQuerystringType }>,
     reply: FastifyReply
   ): Promise<any> {
-    const articles = await prisma.articles.findMany();
-    return articles;
+    const { limit, offset } = req.query;
+
+    return articleService.list({
+      pagination: {
+        limit,
+        offset,
+      },
+    });
   }
 }

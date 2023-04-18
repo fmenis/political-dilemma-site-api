@@ -3,13 +3,14 @@ import { Static, Type } from "@sinclair/typebox";
 export const listArticlesQuerystring = Type.Object(
   {
     limit: Type.Integer({
-      // minimum: 0, ##TODO
-      description: "##TODO.",
-      default: 0,
+      maximum: 100,
+      default: 10,
+      description: "Number of results (pagination).",
     }),
     offset: Type.Integer({
-      /** minimum: 0, ##TODO */ default: 10,
-      description: "##TODO.",
+      maximum: 100,
+      default: 0,
+      description: "Items to skip (pagination).",
     }),
   },
   { additionalProperties: false }
