@@ -20,10 +20,10 @@ export default async function listArticles(
     method: 'GET',
     schema: {
       querystring: listArticlesQuerystring,
-      //##TODO
-      //   response: {
-      //     200: productDetails,
-      //   },
+      response: {
+        //##TODO 200
+        404: fastify.getSchema('notFoundSchema'),
+      },
     },
     handler: onListArticles,
   })

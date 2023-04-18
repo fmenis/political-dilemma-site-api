@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
-import { IListParams } from '../../common/common.interfaces'
+import { IListParams } from '../../common/interface.common'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -21,12 +21,14 @@ interface IArticleListResult {
 export interface IListArticlesParams extends IListParams {}
 
 async function articleService(fastify: FastifyInstance): Promise<void> {
-  const { prisma } = fastify
+  const { prisma /*, commonClientErrors*/ } = fastify
 
   async function list(
     params: IListArticlesParams
   ): Promise<IArticleListResult[]> {
     const { pagination } = params
+
+    // commonClientErrors.throwNotFoundError({ id: 'uuid', name: 'articles' })
 
     const articles = await prisma.articles.findMany({
       select: {
