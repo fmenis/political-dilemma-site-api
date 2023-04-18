@@ -1,4 +1,4 @@
-import { FastifyServerOptions } from "fastify";
+import { FastifyServerOptions } from 'fastify'
 
 export function buildServerOptions(): FastifyServerOptions {
   return {
@@ -10,5 +10,5 @@ export function buildServerOptions(): FastifyServerOptions {
         allErrors: true,
       },
     },
-  };
+  }
 }

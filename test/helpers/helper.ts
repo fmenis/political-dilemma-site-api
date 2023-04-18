@@ -1,25 +1,25 @@
-import Fastify, { FastifyInstance } from "fastify";
-import * as tap from "tap";
-import * as dotenv from "dotenv";
-dotenv.config({ path: "test/.env" });
+import Fastify, { FastifyInstance } from 'fastify'
+import * as tap from 'tap'
+import * as dotenv from 'dotenv'
+dotenv.config({ path: 'test/.env' })
 
-import app from "../../src/app";
+import app from '../../src/app'
 
-export type Test = typeof tap["Test"]["prototype"];
+export type Test = (typeof tap)['Test']['prototype']
 
 export async function build(t: Test): Promise<FastifyInstance> {
   const fastify = Fastify({
     logger: {
-      level: "debug",
+      level: 'debug',
     },
-  });
+  })
 
-  await fastify.register(app);
-  await fastify.ready();
+  await fastify.register(app)
+  await fastify.ready()
 
   t.teardown(async () => {
-    fastify.close();
-  });
+    fastify.close()
+  })
 
-  return fastify;
+  return fastify
 }

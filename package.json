@@ -7,7 +7,7 @@
     "test": "tap --ts test/**/*.spec.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node -r dotenv/config dist/index.js",
-    "dev": "nodemon -r dotenv/config src/index.ts "
+    "dev": "nodemon --config nodemon.json -r dotenv/config src/index.ts "
   },
   "author": "filippomeniswork@gmail.com",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "@types/tap": "^15.0.8",
     "fastify-tsconfig": "^1.0.1",
     "nodemon": "^2.0.22",
+    "prettier": "^2.8.7",
     "prisma": "^4.13.0",
     "tap": "^16.3.4",
     "ts-node": "^10.9.1",

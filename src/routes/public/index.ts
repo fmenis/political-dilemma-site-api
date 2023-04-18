@@ -1,7 +1,7 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance } from 'fastify'
 
-import articleRoutes from "./articles/index";
+import articleRoutes from './articles/index'
 
 export default async function index(fastify: FastifyInstance) {
-  fastify.register(articleRoutes);
+  fastify.register(articleRoutes)
 }

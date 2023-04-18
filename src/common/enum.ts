@@ -1,8 +1,8 @@
 const ENV = {
-  LOCAL: "local",
-  DEVELOPMENT: "development",
-  STAGING: "staging",
-  PRODUCTION: "production",
-};
+  LOCAL: 'local',
+  DEVELOPMENT: 'development',
+  STAGING: 'staging',
+  PRODUCTION: 'production',
+}
 
-export { ENV };
+export { ENV }

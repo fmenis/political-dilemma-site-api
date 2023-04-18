@@ -1,58 +1,58 @@
-import { FastifyInstance } from "fastify";
-import fp from "fastify-plugin";
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUi from "@fastify/swagger-ui";
-import { getServerVersion } from "../utils/main";
+import { FastifyInstance } from 'fastify'
+import fp from 'fastify-plugin'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
+import { getServerVersion } from '../utils/main'
 
 async function swagger(fastify: FastifyInstance): Promise<void> {
-  const version = getServerVersion();
+  const version = getServerVersion()
 
   await fastify.register(fastifySwagger, {
-    mode: "dynamic",
+    mode: 'dynamic',
     openapi: {
       info: {
-        title: "PoliticalDilemma site APi",
-        description: "##TODO",
+        title: 'PoliticalDilemma site APi',
+        description: '##TODO',
         version,
         contact: {
-          name: "Filippo Menis",
-          email: "filippomeniswork@gmail.com",
+          name: 'Filippo Menis',
+          email: 'filippomeniswork@gmail.com',
         },
       },
       externalDocs: {
-        description: "Find more info here",
-        url: "##TODO",
+        description: 'Find more info here',
+        url: '##TODO',
       },
       servers: [
         {
-          url: "http:127.0.0.1:3000",
-          description: "Local server",
+          url: 'http:127.0.0.1:3000',
+          description: 'Local server',
         },
       ],
       tags: [
-        { name: "articles", description: "Articles related end-points" },
+        { name: 'articles', description: 'Articles related end-points' },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     },
-  });
+  })
 
   await fastify.register(fastifySwaggerUi, {
-    routePrefix: "/doc",
+    routePrefix: '/doc',
     initOAuth: {},
     uiConfig: {
-      docExpansion: "full",
+      docExpansion: 'full',
       deepLinking: false,
     },
     uiHooks: {
       onRequest: function (request, reply, next) {
-        next();
+        next()
       },
       preHandler: function (request, reply, next) {
-        next();
+        next()
       },
     },
     staticCSP: true,
-    transformStaticCSP: (header) => header,
-  });
+    transformStaticCSP: header => header,
+  })
 }
 
-export default fp(swagger);
+export default fp(swagger)

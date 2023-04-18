@@ -1,32 +1,32 @@
-import { FastifyInstance } from "fastify";
-import fp from "fastify-plugin";
-import { IListParams } from "../../common/common.interfaces";
+import { FastifyInstance } from 'fastify'
+import fp from 'fastify-plugin'
+import { IListParams } from '../../common/common.interfaces'
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyInstance {
     articleService: {
-      list(params: IListArticlesParams): Promise<IArticleListResult[]>;
-    };
+      list(params: IListArticlesParams): Promise<IArticleListResult[]>
+    }
   }
 }
 
 interface IArticleListResult {
-  id: string;
-  title: string;
-  status: string;
-  createdAt: Date;
-  category: string;
+  id: string
+  title: string
+  status: string
+  createdAt: Date
+  category: string
 }
 
 export interface IListArticlesParams extends IListParams {}
 
 async function articleService(fastify: FastifyInstance): Promise<void> {
-  const { prisma } = fastify;
+  const { prisma } = fastify
 
   async function list(
     params: IListArticlesParams
   ): Promise<IArticleListResult[]> {
-    const { pagination } = params;
+    const { pagination } = params
 
     const articles = await prisma.articles.findMany({
       select: {
@@ -43,22 +43,22 @@ async function articleService(fastify: FastifyInstance): Promise<void> {
       take: pagination.limit,
       skip: pagination.offset,
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
-    });
+    })
 
-    return articles.map((article) => ({
+    return articles.map(article => ({
       id: article.id,
       title: article.title,
       category: article.categories.name,
       status: article.status,
       createdAt: article.createdAt!,
-    }));
+    }))
   }
 
-  fastify.decorate("articleService", {
+  fastify.decorate('articleService', {
     list,
-  });
+  })
 }
 
-export default fp(articleService);
+export default fp(articleService)
