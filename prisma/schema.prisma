@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model activity {
+  id                          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type                        String          @db.VarChar(100)
+  shortType                   String          @db.VarChar(4)
+  title                       String          @unique @db.VarChar(200)
+  description                 String?
+  text                        String?
+  status                      String          @db.VarChar(50)
+  rating                      Float?
+  linkGazzettaUfficiale       String?         @db.VarChar(500)
+  dataPubblicazioneInGazzetta DateTime?       @db.Timestamp(6)
+  categoryId                  String          @db.Uuid
+  ownerId                     String?         @db.Uuid
+  tags                        String[]
+  cancellationReason          String?
+  publishedAt                 DateTime?       @db.Timestamp(6)
+  deletedAt                   DateTime?       @db.Timestamp(6)
+  createdAt                   DateTime?       @default(now()) @db.Timestamp(6)
+  updatedAt                   DateTime?       @default(now()) @db.Timestamp(6)
+  categories                  categories      @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category_id")
+  users                       users?          @relation(fields: [ownerId], references: [id], onUpdate: NoAction, map: "fk_owner_id")
+  files                       files[]
+  internalNotes               internalNotes[]
+}
+
+model activityLog {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  action     String    @db.VarChar(50)
+  resourceId String?   @db.Uuid
+  userId     String?   @db.Uuid
+  userEmail  String    @db.VarChar(50)
+  createdAt  DateTime? @default(now()) @db.Timestamp(6)
+  payload    Json?     @db.Json
+  users      users?    @relation(fields: [userId], references: [id], onUpdate: NoAction, map: "fk_user_id")
+}
+
+model apiAudit {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  api          String    @db.VarChar(50)
+  userEmail    String?   @db.VarChar(50)
+  responseTime Float
+  httpMethod   String    @db.VarChar(20)
+  statusCode   Int
+  createdAt    DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model articles {
+  id                 String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title              String          @unique @db.VarChar(200)
+  text               String?
+  description        String?
+  cancellationReason String?
+  status             String          @db.VarChar(50)
+  tags               String[]
+  categoryId         String          @db.Uuid
+  createdAt          DateTime?       @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime?       @default(now()) @db.Timestamp(6)
+  ownerId            String?         @db.Uuid
+  publishedAt        DateTime?       @db.Timestamp(6)
+  deletedAt          DateTime?       @db.Timestamp(6)
+  categories         categories      @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category_id")
+  users              users?          @relation(fields: [ownerId], references: [id], onUpdate: NoAction, map: "fk_owner_id")
+  files              files[]
+  internalNotes      internalNotes[]
+}
+
+model categories {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String     @unique @db.VarChar(50)
+  description String?
+  type        String     @db.VarChar(20)
+  createdAt   DateTime?  @default(now()) @db.Timestamp(6)
+  activity    activity[]
+  articles    articles[]
+}
+
+model files {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  articleId  String?   @db.Uuid
+  fullPath   String    @db.VarChar(200)
+  url        String    @unique @db.VarChar(200)
+  fileName   String    @db.VarChar(50)
+  extension  String    @db.VarChar(10)
+  mimetype   String    @db.VarChar(50)
+  size       Float
+  ownerId    String?   @db.Uuid
+  category   String    @db.VarChar(100)
+  createdAt  DateTime? @default(now()) @db.Timestamp(6)
+  activityId String?   @db.Uuid
+  target     String    @db.VarChar(50)
+  activity   activity? @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_activity_id")
+  articles   articles? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_article_id")
+  users      users?    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, map: "fk_owner_id")
+}
+
+model internalNotes {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerId    String?   @db.Uuid
+  text       String
+  articleId  String?   @db.Uuid
+  category   String    @db.VarChar(50)
+  createdAt  DateTime? @default(now()) @db.Timestamp(6)
+  activityId String?   @db.Uuid
+  activity   activity? @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_activity_id")
+  articles   articles? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_article_id")
+  users      users?    @relation(fields: [ownerId], references: [id], onUpdate: NoAction, map: "fk_owner_id")
+}
+
+model migrations {
+  version BigInt    @id
+  name    String?
+  md5     String?
+  run_at  DateTime? @db.Timestamptz(6)
+}
+
+model permissions {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  resource          String              @db.VarChar(50)
+  action            String              @db.VarChar(50)
+  ownership         String?             @db.Char(3)
+  description       String              @db.VarChar(200)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  permissions_roles permissions_roles[]
+}
+
+model permissions_roles {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  role_id       String      @db.Uuid
+  permission_id String      @db.Uuid
+  created_at    DateTime?   @default(now()) @db.Timestamp(6)
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_permission_id")
+  roles         roles       @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_role_id")
+}
+
+model politician {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  externalId Int
+  firstName  String    @db.VarChar(50)
+  lastName   String    @db.VarChar(50)
+  gender     String    @db.VarChar(10)
+  birthDate  DateTime  @db.Date
+  birthCity  String    @db.VarChar(50)
+  img        String    @db.VarChar(255)
+  link       String    @db.VarChar(255)
+  createdAt  DateTime? @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model provinces {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String  @unique @db.VarChar(50)
+  code      String  @unique @db.Char(2)
+  id_region String  @db.Uuid
+  regions   regions @relation(fields: [id_region], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_region")
+  users     users[]
+}
+
+model regions {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String      @unique @db.VarChar(50)
+  provinces provinces[]
+  users     users[]
+}
+
+model reset_links {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String    @db.Uuid
+  token        String    @db.VarChar(250)
+  link         String    @db.VarChar(250)
+  already_used Boolean   @default(false)
+  expired_at   DateTime  @db.Timestamp(6)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id")
+}
+
+model roles {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String              @db.VarChar(50)
+  description       String              @db.VarChar(200)
+  is_active         Boolean             @default(true)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  permissions_roles permissions_roles[]
+  users_roles       users_roles[]
+}
+
+model sessions {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.Uuid
+  email       String   @db.VarChar(50)
+  user_agent  String
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  expired_at  DateTime @db.Timestamp(6)
+  last_active DateTime @default(now()) @db.Timestamp(6)
+  is_valid    Boolean  @default(true)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id")
+}
+
+model users {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  first_name    String          @db.VarChar(50)
+  last_name     String          @db.VarChar(50)
+  user_name     String          @unique @db.VarChar(50)
+  email         String          @unique @db.VarChar(50)
+  type          String          @db.VarChar(10)
+  password      String          @db.VarChar(60)
+  birth_date    DateTime?       @db.Timestamp(6)
+  joined_date   DateTime?       @db.Timestamp(6)
+  sex           String?         @db.VarChar(10)
+  bio           String?         @db.VarChar(500)
+  is_blocked    Boolean         @default(false)
+  is_deleted    Boolean         @default(false)
+  created_at    DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?       @default(now()) @db.Timestamp(6)
+  last_access   DateTime?       @db.Timestamp(6)
+  id_region     String          @db.Uuid
+  id_province   String          @db.Uuid
+  activity      activity[]
+  activityLog   activityLog[]
+  articles      articles[]
+  files         files[]
+  internalNotes internalNotes[]
+  reset_links   reset_links[]
+  sessions      sessions[]
+  provinces     provinces       @relation(fields: [id_province], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_province")
+  regions       regions         @relation(fields: [id_region], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_region")
+  users_roles   users_roles[]
+}
+
+model users_roles {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String    @db.Uuid
+  role_id    String    @db.Uuid
+  assign_by  String    @db.Uuid
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_assign_by")
+  roles      roles     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_id")
+}

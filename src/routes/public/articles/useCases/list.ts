@@ -14,6 +14,7 @@ export default async function listArticles(
   opts: RegisterOptions
 ) {
   //   const { productService } = fastify;
+  const { prisma } = fastify;
 
   fastify.route({
     url: "/",
@@ -25,16 +26,14 @@ export default async function listArticles(
       //     200: productDetails,
       //   },
     },
-    handler: onCreateProduct,
+    handler: onListArticles,
   });
 
-  async function onCreateProduct(
+  async function onListArticles(
     req: FastifyRequest<{ Querystring: ListArticlesType }>,
     reply: FastifyReply
-  ): Promise<ListArticlesType> {
-    return {
-      id: "afe6ba1c-db74-4ffb-82f5-d2210e885caa",
-      title: "Foo",
-    };
+  ): Promise<any> {
+    const articles = await prisma.articles.findMany();
+    return articles;
   }
 }
