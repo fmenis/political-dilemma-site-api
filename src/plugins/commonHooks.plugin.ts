@@ -1,7 +1,5 @@
 import fp from 'fastify-plugin'
-// import S from 'fluent-json-schema'
 
-// import { trimObjectFields } from '../common/utils.js'
 import {
   FastifyError,
   FastifyInstance,
@@ -9,10 +7,14 @@ import {
   FastifyReply,
 } from 'fastify'
 import { IClientHttpError } from '../routes/common/interface.common.js'
+import { trimObjectFields } from '../common/utils.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
     resource: any
+  }
+  interface FastifyContextConfig {
+    trimBodyFields: string[] | undefined
   }
 }
 
@@ -27,24 +29,32 @@ async function commonHooks(fastify: FastifyInstance) {
   /**
    * Additional request logs and trim target body fields
    */
-  // fastify.addHook('preValidation', async (req, reply) => {
-  //   const { body, log, user } = req
-  //   if (user) {
-  //     log.debug(
-  //       {
-  //         id: user.id,
-  //         email: user.email,
-  //       },
-  //       'user'
-  //     )
-  //   }
-  //   if (fastify.config.ENABLE_BODY_LOG && body) {
-  //     log.debug(body, 'parsed body')
-  //   }
-  //   if (reply.context.config.trimBodyFields) {
-  //     req.body = trimObjectFields(reply.context.config.trimBodyFields, req.body)
-  //   }
-  // })
+  fastify.addHook(
+    'preValidation',
+    async (req: FastifyRequest, reply: FastifyReply) => {
+      //##TODO
+      // const { body, log, user } = req
+      // if (user) {
+      //   log.debug(
+      //     {
+      //       id: user.id,
+      //       email: user.email,
+      //     },
+      //     'user'
+      //   )
+      // }
+      // if (fastify.config.ENABLE_BODY_LOG && body) {
+      //   log.debug(body, 'parsed body')
+      // }
+      // if (reply.context.config.trimBodyFields) {
+      //   req.body = trimObjectFields(reply.context.config.trimBodyFields, req.body)
+      // }
+
+      if (req.routeConfig.trimBodyFields) {
+        req.body = trimObjectFields(req.routeConfig.trimBodyFields, req.body)
+      }
+    }
+  )
 
   /**
    * Set common routes stuff
