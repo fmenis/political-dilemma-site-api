@@ -28,6 +28,7 @@ async function articleService(fastify: FastifyInstance): Promise<void> {
   ): Promise<IArticleListResult[]> {
     const { pagination } = params
 
+    //It works!!
     // commonClientErrors.throwNotFoundError({ id: 'uuid', name: 'articles' })
 
     const articles = await prisma.articles.findMany({

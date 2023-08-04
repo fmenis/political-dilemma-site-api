@@ -20,10 +20,9 @@ export default async function listArticles(
     method: 'GET',
     schema: {
       querystring: listArticlesQuerystring,
-      response: {
-        //##TODO 200
-        404: fastify.getSchema('notFoundSchema'),
-      },
+      // response: {
+      //   404: fastify.getSchema('sNotFound'),
+      // },
     },
     handler: onListArticles,
   })
@@ -34,11 +33,13 @@ export default async function listArticles(
   ): Promise<any> {
     const { limit, offset } = req.query
 
-    return articleService.list({
+    const articles = await articleService.list({
       pagination: {
         limit,
         offset,
       },
     })
+
+    return articles
   }
 }

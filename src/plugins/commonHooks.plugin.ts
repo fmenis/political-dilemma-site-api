@@ -7,7 +7,7 @@ import {
   FastifyReply,
 } from 'fastify'
 import { IClientHttpError } from '../routes/common/interface.common.js'
-import { trimObjectFields } from '../common/utils.js'
+// import { trimObjectFields } from '../common/utils.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -49,41 +49,35 @@ async function commonHooks(fastify: FastifyInstance) {
       // if (reply.context.config.trimBodyFields) {
       //   req.body = trimObjectFields(reply.context.config.trimBodyFields, req.body)
       // }
-
-      if (req.routeConfig.trimBodyFields) {
-        req.body = trimObjectFields(req.routeConfig.trimBodyFields, req.body)
-      }
+      // if (req.routeConfig.trimBodyFields) {
+      //   req.body = trimObjectFields(req.routeConfig.trimBodyFields, req.body)
+      // }
     }
   )
 
   /**
    * Set common routes stuff
    */
-  // fastify.addHook('onRoute', options => {
-  //   options.schema = {
-  //     ...options.schema,
-  //     response: {
-  //       ...options.schema.response,
-  //       //##TODO impostarli a livello di singolo endpoint
-  //       // 400: fastify.getSchema('sBadRequest'),
-  //       // 401: fastify.getSchema('sUnauthorized'),
-  //       // 403: fastify.getSchema('sForbidden'),
-  //       500: fastify.getSchema('sInternalServerError'),
-  //     },
-  //   }
-
-  //   //##TODO impostare quando decisa autenticazione
-  //   // if (!options.config.public) {
-  //   //   options.schema = {
-  //   //     ...options.schema,
-  //   //     headers: S.object()
-  //   //       .additionalProperties(true)
-  //   //       .prop('Cookie', S.string())
-  //   //       .description('Authentication cookie header.')
-  //   //       .required(),
-  //   //   }
-  //   // }
-  // })
+  fastify.addHook('onRoute', options => {
+    options.schema = {
+      ...options.schema,
+      response: {
+        ...options!.schema!.response!,
+        500: fastify.getSchema('sInternalServerError'),
+      },
+    }
+    //##TODO impostare quando decisa autenticazione
+    // if (!options.config.public) {
+    //   options.schema = {
+    //     ...options.schema,
+    //     headers: S.object()
+    //       .additionalProperties(true)
+    //       .prop('Cookie', S.string())
+    //       .description('Authentication cookie header.')
+    //       .required(),
+    //   }
+    // }
+  })
 
   /**
    * Log validation errors
@@ -92,15 +86,12 @@ async function commonHooks(fastify: FastifyInstance) {
     'onError',
     async (req: FastifyRequest, reply: FastifyReply, error: FastifyError) => {
       const clientError: Partial<IClientHttpError> = { ...error }
-
       clientError.internalCode = clientError.internalCode || '0000'
       clientError.details = clientError.details || {}
-
       clientError.message =
         reply.statusCode === 500
-          ? 'Somethig went wrong...'
+          ? 'Something went wrong...'
           : clientError.message
-
       if (clientError.validation) {
         clientError.details.validation = error.validation
       }
