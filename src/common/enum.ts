@@ -1,11 +1,10 @@
 const ENV = {
   LOCAL: 'local',
+  TEST: 'TEST',
   DEVELOPMENT: 'development',
   STAGING: 'staging',
   PRODUCTION: 'production',
 }
-
-export { ENV }
 
 const CATEGORY_TYPES = {
   ARTICLE: 'ARTICLE',
@@ -24,4 +23,4 @@ const STATES = {
 
 const ARTICLE_STATES = STATES
 
-export { CATEGORY_TYPES, ARTICLE_STATES }
+export { ENV, CATEGORY_TYPES, ARTICLE_STATES }

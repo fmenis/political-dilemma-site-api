@@ -12,6 +12,7 @@
   "author": "filippomeniswork@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^9.0.4",
     "@fastify/cors": "^8.2.1",
     "@fastify/env": "^4.2.0",
     "@fastify/helmet": "^10.1.0",
@@ -21,6 +22,7 @@
     "@prisma/client": "^4.13.0",
     "@sinclair/typebox": "^0.27.8",
     "close-with-grace": "^1.2.0",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.0.3",
     "fastify": "^4.15.0"
   },

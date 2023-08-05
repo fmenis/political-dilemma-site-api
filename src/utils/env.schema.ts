@@ -10,6 +10,7 @@ export const configSchema = Type.Object(
   {
     NODE_ENV: StringEnum([
       ENV.LOCAL,
+      ENV.TEST,
       ENV.DEVELOPMENT,
       ENV.STAGING,
       ENV.PRODUCTION,
@@ -17,6 +18,8 @@ export const configSchema = Type.Object(
     SERVER_ADDRESS: Type.String({ default: '127.0.0.1' }),
     SERVER_PORT: Type.Number({ default: 3000 }),
     LOG_LEVEL: StringEnum(['info', 'debug']),
+    SECRET: Type.String(),
+    SESSION_TTL: Type.Number(),
   },
   { additionalProperties: false }
 )

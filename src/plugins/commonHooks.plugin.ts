@@ -14,7 +14,8 @@ declare module 'fastify' {
     resource: any
   }
   interface FastifyContextConfig {
-    trimBodyFields: string[] | undefined
+    trimBodyFields?: string[] | undefined
+    public?: boolean
   }
 }
 
@@ -67,17 +68,6 @@ async function commonHooks(fastify: FastifyInstance) {
         500: fastify.getSchema('sInternalServerError'),
       },
     }
-    //##TODO impostare quando decisa autenticazione
-    // if (!options.config.public) {
-    //   options.schema = {
-    //     ...options.schema,
-    //     headers: S.object()
-    //       .additionalProperties(true)
-    //       .prop('Cookie', S.string())
-    //       .description('Authentication cookie header.')
-    //       .required(),
-    //   }
-    // }
   })
 
   /**
