@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import env from '@fastify/env'
+import closeWithGrace from 'close-with-grace'
 
 import { ConfigSchemaType, configSchema } from './utils/env.schema'
 import { buildServerOptions } from './utils/serverOpts'
@@ -12,34 +13,42 @@ declare module 'fastify' {
 }
 
 const fastify = Fastify(buildServerOptions())
+const { log } = fastify
+
+closeWithGrace({ delay: 500 }, async ({ signal, err }) => {
+  if (err) {
+    log.error(err)
+  }
+  log.debug(`'${signal}' signal received. Gracefully closing fastify server`)
+  await fastify.close()
+})
 
 async function run() {
-  await fastify.register(env, {
-    dotenv: true,
-    schema: configSchema,
-  })
+  try {
+    await fastify.register(env, {
+      dotenv: true,
+      schema: configSchema,
+    })
 
-  await fastify.register(app)
+    await fastify.register(app)
+    await fastify.ready()
 
-  await fastify.ready()
+    await fastify.listen({
+      port: fastify.config.SERVER_PORT,
+      host: fastify.config.SERVER_ADDRESS,
+    })
 
-  await fastify.listen({
-    port: fastify.config.SERVER_PORT,
-    host: fastify.config.SERVER_ADDRESS,
-  })
-
-  fastify.log.debug(
-    `Server launched in '${fastify.config.NODE_ENV}' environment`
-  )
+    log.debug(`Server launched in '${fastify.config.NODE_ENV}' environment`)
+  } catch (error) {
+    log.fatal(error)
+    process.exit(1)
+  }
 }
 
-run().catch(err => {
-  fastify.log.fatal(err)
-  process.exit(1)
-})
+run()
 
 /**
  * ##TODO
  * - linter and formatter
- * - nodemon config file
+ * - e2e test (seeding db)
  */

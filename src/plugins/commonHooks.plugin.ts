@@ -6,8 +6,8 @@ import {
   FastifyRequest,
   FastifyReply,
 } from 'fastify'
-import { IClientHttpError } from '../routes/common/interface.common.js'
-// import { trimObjectFields } from '../common/utils.js'
+import { IClientHttpError } from '../routes/common/interface.common'
+import { trimObjectFields } from '../common/utils'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -49,9 +49,9 @@ async function commonHooks(fastify: FastifyInstance) {
       // if (reply.context.config.trimBodyFields) {
       //   req.body = trimObjectFields(reply.context.config.trimBodyFields, req.body)
       // }
-      // if (req.routeConfig.trimBodyFields) {
-      //   req.body = trimObjectFields(req.routeConfig.trimBodyFields, req.body)
-      // }
+      if (req.routeConfig.trimBodyFields) {
+        req.body = trimObjectFields(req.routeConfig.trimBodyFields, req.body)
+      }
     }
   )
 
@@ -63,6 +63,7 @@ async function commonHooks(fastify: FastifyInstance) {
       ...options.schema,
       response: {
         ...options!.schema!.response!,
+        400: fastify.getSchema('sBadRequest'),
         500: fastify.getSchema('sInternalServerError'),
       },
     }
