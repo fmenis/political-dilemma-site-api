@@ -8,6 +8,7 @@ import {
   ListArticlesQuerystringType,
   listArticlesQuerystring,
 } from '../lib/article.schema'
+import { buildRouteFullDescription } from '../../../../common/utils'
 
 export default async function listArticles(
   fastify: FastifyInstance,
@@ -19,6 +20,10 @@ export default async function listArticles(
     url: '/',
     method: 'GET',
     schema: {
+      description: buildRouteFullDescription({
+        api: 'list',
+        description: 'List articles.',
+      }),
       querystring: listArticlesQuerystring,
       // response: {
       //   404: fastify.getSchema('sNotFound'),

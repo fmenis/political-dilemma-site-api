@@ -8,7 +8,7 @@ import app from './app'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    config: ConfigSchemaType
+    env: ConfigSchemaType
   }
 }
 
@@ -26,6 +26,7 @@ closeWithGrace({ delay: 500 }, async ({ signal, err }) => {
 async function run() {
   try {
     await fastify.register(env, {
+      confKey: 'env',
       dotenv: true,
       schema: configSchema,
     })
@@ -34,11 +35,11 @@ async function run() {
     await fastify.ready()
 
     await fastify.listen({
-      port: fastify.config.SERVER_PORT,
-      host: fastify.config.SERVER_ADDRESS,
+      port: fastify.env.SERVER_PORT,
+      host: fastify.env.SERVER_ADDRESS,
     })
 
-    log.debug(`Server launched in '${fastify.config.NODE_ENV}' environment`)
+    log.debug(`Server launched in '${fastify.env.NODE_ENV}' environment`)
   } catch (error) {
     log.fatal(error)
     process.exit(1)
@@ -51,4 +52,6 @@ run()
  * ##TODO
  * - linter and formatter
  * - e2e test (seeding db)
+ * - capire perchè --inspect non funge nel comando npm run dev
+ * - sentry
  */

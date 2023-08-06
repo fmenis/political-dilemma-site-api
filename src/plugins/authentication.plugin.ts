@@ -19,16 +19,16 @@ declare module 'fastify' {
 }
 
 async function authentication(fastify: FastifyInstance): Promise<void> {
-  const { prisma, config } = fastify
+  const { prisma, env } = fastify
 
   fastify.register(cookie, {
-    secret: config.SECRET,
+    secret: env.SECRET,
   })
 
   async function authenticate(req: FastifyRequest, reply: FastifyReply) {
     const { log } = req
 
-    if (req.routeConfig.public || config.NODE_ENV === ENV.TEST) {
+    if (req.routeConfig.public || env.NODE_ENV === ENV.TEST) {
       return
     }
 
@@ -98,7 +98,7 @@ async function authentication(fastify: FastifyInstance): Promise<void> {
     await prisma.sessions.update({
       data: {
         last_active: new Date(),
-        expired_at: dayjs().add(config.SESSION_TTL, 'seconds').toDate(),
+        expired_at: dayjs().add(env.SESSION_TTL, 'seconds').toDate(),
       },
       where: {
         id: session!.id,

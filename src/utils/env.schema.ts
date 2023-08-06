@@ -20,6 +20,7 @@ export const configSchema = Type.Object(
     LOG_LEVEL: StringEnum(['info', 'debug']),
     SECRET: Type.String(),
     SESSION_TTL: Type.Number(),
+    ENABLE_BODY_LOG: Type.Boolean({ default: false }),
   },
   { additionalProperties: false }
 )

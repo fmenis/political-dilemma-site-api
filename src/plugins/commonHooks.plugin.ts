@@ -20,6 +20,8 @@ declare module 'fastify' {
 }
 
 async function commonHooks(fastify: FastifyInstance) {
+  const { env } = fastify
+
   /**
    * Empty object that can be utilized to pass object between hook
    */
@@ -33,23 +35,20 @@ async function commonHooks(fastify: FastifyInstance) {
   fastify.addHook(
     'preValidation',
     async (req: FastifyRequest, reply: FastifyReply) => {
-      //##TODO
-      // const { body, log, user } = req
-      // if (user) {
-      //   log.debug(
-      //     {
-      //       id: user.id,
-      //       email: user.email,
-      //     },
-      //     'user'
-      //   )
-      // }
-      // if (fastify.config.ENABLE_BODY_LOG && body) {
-      //   log.debug(body, 'parsed body')
-      // }
-      // if (reply.context.config.trimBodyFields) {
-      //   req.body = trimObjectFields(reply.context.config.trimBodyFields, req.body)
-      // }
+      const { body, log, user } = req
+      if (user) {
+        log.debug(
+          {
+            id: user.id,
+            email: user.email,
+          },
+          'user'
+        )
+      }
+      if (env.ENABLE_BODY_LOG && body) {
+        log.debug(body, 'parsed body')
+      }
+
       if (req.routeConfig.trimBodyFields) {
         req.body = trimObjectFields(req.routeConfig.trimBodyFields, req.body)
       }

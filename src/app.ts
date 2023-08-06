@@ -6,8 +6,11 @@ import helmet from '@fastify/helmet'
 import apiPlugin from './routes/index'
 
 export default async function app(fastify: FastifyInstance): Promise<void> {
-  //##TODO tune options
-  fastify.register(cors)
+  fastify.register(cors, {
+    methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+    origin: true,
+    credentials: true,
+  })
 
   fastify.register(sensible)
 
